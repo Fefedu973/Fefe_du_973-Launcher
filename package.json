@@ -1,10 +1,10 @@
 {
-    "name": "fefe_du_973-launcher",
-    "preductname": "Fefe_du_973 Launcher",
-    "version": "1.3.8",
-    "description": "Launcher minecraft custom pour le serveur minecraft Fefe_du_973 avec modpack (premium + crack)",
+    "name": "kolta-launcher",
+    "preductname": "kolta Launcher",
+    "version": "1.0.0",
+    "description": "launcher de kolta studios",
     "main": "src/app.js",
-    "author": "Autheur et créateur principal : Luuxis - Fork : Fefe_du_973",
+    "author": "Mckovin y paltayiyi",
     "url": "https://fefe-du-973.fr/launcher_backend",
     "engines": {
         "node": "16.x.x"
@@ -32,6 +32,6 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Fefedu973/Fefe_du_973-Launcher.git"
+        "url": "git+https://github.com/Kovilta5/Kolta-Launcher.git"
     }
 }
