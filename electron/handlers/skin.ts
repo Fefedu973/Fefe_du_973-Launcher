@@ -44,7 +44,14 @@ export function registerSkinHandlers() {
   ipcMain.handle('skin:reload', async (_event, account?: Account) => {
     const manager = getSkinManager(account)
     if (!manager) return null
-    await manager.reload()
+
+    try {
+      await manager.reload()
+      return true
+    } catch (err) {
+      logger.warn('Failed to reload account cosmetics:', err)
+      return null
+    }
   })
 
   ipcMain.handle('skin:get_skin', async (_event, account?: Account) => {
@@ -58,7 +65,13 @@ export function registerSkinHandlers() {
   ipcMain.handle('skin:get_cape', async (_event, account?: Account) => {
     const manager = getSkinManager(account)
     if (!manager) return null
-    return await manager.getCapes()
+
+    try {
+      return await manager.getCapes()
+    } catch (err) {
+      logger.warn('Failed to get capes:', err)
+      return null
+    }
   })
 
   ipcMain.handle('skin:get_avatar', async (_event, account?: Account) => {

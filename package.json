@@ -4,7 +4,7 @@
   "author": "Fefe_du_973",
   "description": "Launcher Minecraft du serveur Fefe du 973",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "engines": {
     "node": ">=22.12.0"
@@ -118,7 +118,8 @@
   "dependencies": {
     "electron-log": "^5.4.3",
     "electron-updater": "6.8.9",
-    "eml-lib": "2.5.0"
+    "eml-lib": "2.5.0",
+    "pngjs": "^7.0.0"
   },
   "devDependencies": {
     "@fontsource-variable/inter": "^5.2.8",

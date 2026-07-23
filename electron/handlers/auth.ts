@@ -11,6 +11,28 @@ type StoredSession = { version: 1; type: 'offline'; account: Account } | { versi
 
 export type IAuthResponse = { success: true; account: Account } | { success: false; error: string }
 
+function getMicrosoftLoginError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+
+  if (/cancelled/i.test(message)) {
+    return 'Connexion Microsoft annulée.'
+  }
+  if (/minecraft not owned/i.test(message)) {
+    return 'Ce compte Microsoft ne possède pas Minecraft: Java Edition.'
+  }
+  if (/xsts|xbox privacy/i.test(message)) {
+    return 'La connexion Xbox a été refusée. Vérifie les paramètres de confidentialité et le profil Xbox de ce compte.'
+  }
+  if (/too many requests|http 429/i.test(message)) {
+    return 'Microsoft limite temporairement les connexions. Réessaie dans quelques minutes.'
+  }
+  if (/fetch|network|econn|timed? ?out/i.test(message)) {
+    return 'Impossible de joindre Microsoft. Vérifie ta connexion Internet puis réessaie.'
+  }
+
+  return 'La connexion Microsoft a échoué. Réessaie dans quelques instants.'
+}
+
 function saveSession(account: Account) {
   let stored: StoredSession
 
@@ -55,9 +77,9 @@ export function registerAuthHandlers(mainWindow: Electron.BrowserWindow) {
       const account = await microsoftAuth.auth()
       saveSession(account)
       return { success: true, account } as IAuthResponse
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error('Microsoft login failed:', err)
-      return { success: false, error: 'La connexion Microsoft a échoué. Réessaie dans quelques instants.' }
+      return { success: false, error: getMicrosoftLoginError(err) }
     }
   })
 
