@@ -5,7 +5,7 @@
     "description": "Launcher minecraft custom pour le serveur minecraft Fefe_du_973 avec modpack (premium + crack)",
     "main": "src/app.js",
     "author": "Autheur et créateur principal : Luuxis - Fork : Fefe_du_973",
-    "url": "https://fefe-du-973.fr/launcher_backend",
+    "url": "https://launcher.mc.fefe-du-973.fr",
     "engines": {
         "node": "16.x.x"
     },
