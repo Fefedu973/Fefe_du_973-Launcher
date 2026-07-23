@@ -1,37 +1,142 @@
 {
-    "name": "fefe_du_973-launcher",
-    "preductname": "Fefe_du_973 Launcher",
-    "version": "1.3.8",
-    "description": "Launcher minecraft custom pour le serveur minecraft Fefe_du_973 avec modpack (premium + crack)",
-    "main": "src/app.js",
-    "author": "Autheur et créateur principal : Luuxis - Fork : Fefe_du_973",
-    "url": "https://launcher.mc.fefe-du-973.fr",
-    "engines": {
-        "node": "16.x.x"
+  "name": "fefe-du-973-launcher",
+  "productName": "Fefe du 973 Launcher",
+  "author": "Fefe_du_973",
+  "description": "Launcher Minecraft du serveur Fefe du 973",
+  "private": true,
+  "version": "2.0.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "check": "tsc --noEmit",
+    "test:ui": "npm run build && node scripts/capture-ui.mjs",
+    "test:ui:online": "npm run build && node scripts/capture-ui.mjs --online",
+    "test:packaged": "node scripts/capture-ui.mjs --packaged",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "release:win": "npm run build && electron-builder --win",
+    "release:mac": "npm run build && electron-builder --mac",
+    "release:lin": "npm run build && electron-builder --linux"
+  },
+  "build": {
+    "appId": "fr.fefedu973.launcher",
+    "productName": "Fefe du 973 Launcher",
+    "copyright": "Copyright © 2026 Fefe_du_973",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
     },
-    "scripts": {
-        "start": "env-cmd electron .",
-        "build": "node build.js",
-        "dev": "nodemon --exec npm start"
+    "files": [
+      "dist",
+      "dist-electron",
+      "package.json",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
+    "publish": {
+      "provider": "generic",
+      "url": "https://launcher.mc.fefe-du-973.fr"
     },
-    "license": "CC0",
-    "nodemonConfig": {
-        "ext": "js,html,css"
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "legalTrademarks": "Fefe_du_973"
     },
-    "dependencies": {
-        "electron-updater": "^5.0.1",
-        "minecraft-java-core": "^3.5.7",
-        "node-fetch": "^2.6.7"
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Fefe du 973 Launcher",
+      "deleteAppDataOnUninstall": true,
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "uninstallDisplayName": "Fefe du 973 Launcher"
     },
-    "devDependencies": {
-        "electron": "^19.0.4",
-        "electron-builder": "^23.0.3",
-        "env-cmd": "^10.1.0",
-        "javascript-obfuscator": "^4.0.2",
-        "nodemon": "^2.0.16"
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.games",
+      "icon": "build/icon.icns",
+      "darkModeSupport": true,
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "artifactName": "${productName}-${version}.${ext}"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Fefedu973/Fefe_du_973-Launcher.git"
+    "dmg": {
+      "background": "build/background.png",
+      "icon": "build/dmg-icon.icns",
+      "iconSize": 100,
+      "contents": [
+        {
+          "x": 130,
+          "y": 190
+        },
+        {
+          "x": 410,
+          "y": 190,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 430
+      }
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
+      "icon": "build/icon.png",
+      "category": "Game",
+      "description": "Launcher Minecraft du serveur Fefe du 973",
+      "artifactName": "${productName}-${version}.${ext}"
     }
+  },
+  "dependencies": {
+    "electron-log": "^5.4.3",
+    "electron-updater": "6.8.9",
+    "eml-lib": "2.5.0"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fortawesome/fontawesome-free": "^7.0.1",
+    "dompurify": "^3.4.12",
+    "electron": "43.2.0",
+    "electron-builder": "^26.8.1",
+    "marked": "^18.0.3",
+    "playwright-core": "^1.57.0",
+    "prettier": "^3.8.3",
+    "sass-embedded": "^1.99.0",
+    "skinview3d": "^3.4.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-electron": "^0.29.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fefedu973/Fefe_du_973-Launcher.git"
+  }
 }

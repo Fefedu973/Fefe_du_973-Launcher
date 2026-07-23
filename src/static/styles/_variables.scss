@@ -1,0 +1,25 @@
+:root {
+  /* Colors */
+  --primary: #ff6a1a;
+  --primary-hover: #ff7d32;
+  --secondary: #35bdf4;
+  --accent: #9b6bd7;
+  --bg-dark: #090a0d;
+  --surface: rgba(16, 18, 24, 0.82);
+  --text-main: #ffffff;
+  --text-muted: #a8adb9;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(14, 16, 21, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.11);
+  --glass-blur: 18px;
+
+  /* Shadows */
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  /* Layout */
+  --sidebar-width: 360px;
+
+  /* UI System */
+  --btn-radius: 6px;
+}

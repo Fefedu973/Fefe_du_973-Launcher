@@ -1,0 +1,28 @@
+div.maintenance-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  h3 {
+    font-size: 21px;
+  }
+
+  .gears {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+  }
+
+  .dates {
+    opacity: 0.8;
+    margin-bottom: 0.7rem;
+    margin-top: 0.2rem;
+    font-size: 14px;
+  }
+
+  .text {
+    opacity: 1;
+  }
+}

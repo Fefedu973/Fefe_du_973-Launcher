@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https: http://localhost:* ws://localhost:*"
+    />
+    <title>Fefe du 973 Launcher</title>
+    <style>
+      body {
+        background-color: #121212;
+        overflow: hidden;
+      }
+
+      body:not(.loaded) div#app {
+        opacity: 0 !important;
+        visibility: hidden;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      body.loaded div#app {
+        transition: opacity 0.4s ease-in-out;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      div.view:not(.active) {
+        display: none;
+      }
+
+      div.loading,
+      div.maintenance,
+      div.update {
+        position: fixed;
+        top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        background-color: #121212;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      div.loading {
+        opacity: 1;
+      }
+
+      div.loading.loaded {
+        opacity: 0;
+      }
+
+      div.maintenance,
+      div.update {
+        opacity: 0;
+      }
+
+      div.maintenance.loaded,
+      div.update.loaded {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="view-loading" class="loading" data-view="loading">
+      <div class="loading-card">
+        <p class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></p>
+        <p class="text">Chargement du launcher...</p>
+      </div>
+    </div>
+
+    <div id="view-maintenance" class="maintenance" data-view="maintenance">
+      <div class="maintenance-card">
+        <p class="gears"><i class="fa-solid fa-gears"></i></p>
+        <h3>Serveur en maintenance</h3>
+        <p class="dates" id="maintenance-dates"></p>
+        <p class="text" id="maintenance-reason"></p>
+      </div>
+    </div>
+
+    <div id="view-update" class="update" data-view="update">
+      <div class="maintenance-card">
+        <p class="up"><i class="fa-solid fa-circle-up"></i></p>
+        <h3>Une mise à jour est disponible</h3>
+        <p class="text" id="update-text">Le launcher va se mettre à jour automatiquement.</p>
+        <div class="progress-container" id="update-progress-container">
+          <div class="progress-info">
+            <span id="update-progress-label">Téléchargement...</span>
+            <span id="update-progress-percent">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="update-progress-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="app">
+      <div class="app-background"></div>
+
+      <div id="view-login" class="view" data-view="login">
+        <div class="login-card">
+          <img src="/src/static/images/server-logo.png" class="logo" alt="Better Minecraft, Fefe du 973 Edition" />
+          <p class="eyebrow">Fefe du 973</p>
+          <h1>Rejoindre le serveur</h1>
+          <p class="subtitle">Choisis ton pseudo pour retrouver le fonctionnement actuel du serveur.</p>
+
+          <form id="offline-login-form" class="offline-login-form">
+            <label for="offline-username">Pseudo Minecraft</label>
+            <div class="offline-login-row">
+              <input
+                id="offline-username"
+                name="username"
+                type="text"
+                minlength="3"
+                maxlength="16"
+                pattern="[A-Za-z0-9_]{3,16}"
+                placeholder="Ton pseudo"
+                autocomplete="username"
+                required
+              />
+              <button id="btn-login-offline" class="btn btn-primary" type="submit">
+                <span>Continuer</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+
+          <div class="login-separator"><span>ou</span></div>
+
+          <button id="btn-login-ms" class="btn btn-microsoft">
+            <i class="fa-brands fa-microsoft"></i>
+            <span>Se connecter avec Microsoft</span>
+          </button>
+
+          <div class="login-footer">
+            <small>Le compte local est réservé à la compatibilité du serveur actuel.</small>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-home" class="view" data-view="home">
+        <aside class="home-sidebar">
+          <div class="sidebar-top">
+            <div class="user-profile">
+              <div class="avatar-fallback">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                <img src="" id="user-avatar" alt="Avatar du joueur" hidden />
+              </div>
+              <div class="user-details">
+                <span id="user-name">Undefined</span>
+                <span class="rank-badge">Compte</span>
+              </div>
+            </div>
+
+            <button id="btn-settings" class="btn btn-secondary" title="Paramètres"><i class="fa-fw fa-solid fa-gear"></i></button>
+          </div>
+
+          <div class="sidebar-middle">
+            <img src="/src/static/images/server-logo.png" class="server-brand-logo" alt="Better Minecraft, Fefe du 973 Edition" />
+            <p class="server-description">Le launcher installe Java, synchronise le modpack et applique les mises à jour avant chaque lancement.</p>
+            <div class="server-links">
+              <a href="https://fefe-du-973.fr" target="_blank" class="btn btn-secondary">
+                <i class="fa-solid fa-globe"></i>
+                <span>Site du serveur</span>
+              </a>
+              <a href="https://github.com/Fefedu973/Fefe_du_973-Launcher" target="_blank" class="btn btn-secondary">
+                <i class="fa-brands fa-github"></i>
+                <span>Code source</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="sidebar-bottom">
+            <div class="profile-selector-container" id="profile-selector">
+              <div class="selected-profile">
+                <span id="current-profile-name">Chargement du profil...</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+              <div class="profile-dropdown" id="profile-dropdown"></div>
+            </div>
+
+            <div class="server-status">
+              <div class="status-indicator" id="server-status-indicator">
+                <div class="status-dot pinging" id="server-status-dot"></div>
+                <span class="status-text" id="server-status-text">Vérification...</span>
+              </div>
+              <div class="player-count" id="player-count"></div>
+            </div>
+
+            <div class="launch-area">
+              <button id="btn-play" disabled>JOUER</button>
+
+              <div class="progress-container hidden" id="launch-progress-container">
+                <div class="progress-info">
+                  <span id="launch-progress-label">Téléchargement...</span>
+                  <span id="launch-progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" id="launch-progress-bar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="home-content">
+          <div class="news-header">
+            <div>
+              <p class="eyebrow">Informations du serveur</p>
+              <h2>Actualités</h2>
+            </div>
+            <div class="social-links">
+              <a href="https://fefe-du-973.fr" target="_blank" class="btn btn-icon-only" title="Site du serveur"><i class="fa-solid fa-globe"></i></a>
+              <a href="https://github.com/Fefedu973/Fefe_du_973-Launcher" target="_blank" class="btn btn-icon-only" title="GitHub"
+                ><i class="fa-brands fa-github"></i
+              ></a>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="news-list" id="news-list"></div>
+        </main>
+      </div>
+
+      <div id="view-settings" class="view overlay" data-view="settings">
+        <div class="settings-modal">
+          <button id="btn-close-settings" class="btn btn-icon-only btn-close-absolute">
+            <i class="fa-fw fa-solid fa-xmark"></i>
+          </button>
+
+          <aside class="settings-sidebar">
+            <h2>Paramètres</h2>
+            <nav>
+              <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Jeu</span></button>
+              <button class="btn nav-btn" data-tab="skin"><i class="fa-fw fa-solid fa-shirt"></i><span>Skin</span></button>
+              <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Compte</span></button>
+            </nav>
+            <p id="version"></p>
+          </aside>
+
+          <main class="settings-content" id="settings-content">
+            <section id="tab-game" class="tab-content active">
+              <h3>Configuration de Minecraft</h3>
+
+              <div class="setting-group">
+                <label><i class="fa-fw fa-solid fa-memory"></i>&nbsp;&nbsp;Mémoire allouée</label>
+
+                <div class="dual-slider-container">
+                  <div class="slider-track"></div>
+                  <div class="slider-fill" id="ram-track-fill"></div>
+
+                  <input type="range" id="ram-min" min="0.5" max="16" step="0.5" value="2" />
+                  <input type="range" id="ram-max" min="0.5" max="16" step="0.5" value="8" />
+                </div>
+
+                <div class="ram-labels">
+                  <span id="ram-min-label">2 GB</span>
+                  <span id="ram-max-label">8 GB</span>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <label><i class="fa-fw fa-solid fa-display"></i>&nbsp;&nbsp;Taille de la fenêtre</label>
+                <select id="resolution-select"></select>
+              </div>
+
+              <div class="setting-group">
+                <label><i class="fa-solid fa-power-off"></i>&nbsp;&nbsp;Après le lancement</label>
+                <div class="select-wrapper">
+                  <select id="launcher-action-select">
+                    <option value="close">Fermer le launcher</option>
+                    <option value="keep">Garder le launcher ouvert</option>
+                    <option value="hide">Réduire le launcher</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <label><i class="fa-brands fa-java"></i>&nbsp;&nbsp;Version de Java</label>
+                <div class="java-selector">
+                  <select id="java-select">
+                    <option value="bundled">Java géré automatiquement (recommandé)</option>
+                    <option value="system">Java du système (PATH)</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <section class="tab-content skin-management" id="tab-skin">
+              <h3>Personnalisation du skin</h3>
+
+              <canvas id="skin-container"></canvas>
+
+              <div class="setting-group">
+                <label><i class="fa-fw fa-solid fa-shirt"></i>&nbsp;&nbsp;Skins</label>
+
+                <div id="skin-gallery" class="skin-gallery"></div>
+                <div id="add-skin" class="add-skin">
+                  <p class="add-skin-title">Ajouter un skin</p>
+                  <div class="btns-add-skin">
+                    <button id="btn-add-skin-file" class="btn-add-skin active">Fichier</button>
+                    <button id="btn-add-skin-url" class="btn-add-skin">URL</button>
+                  </div>
+
+                  <div id="form-add-skin-file">
+                    <label for="input-add-skin-file">Fichier du skin :</label>
+                    <input type="file" id="input-add-skin-file" accept=".png" />
+                    <button class="btn btn-choose-file btn-secondary" id="btn-add-skin-choose-file">Choisir un fichier...</button>
+                    <div id="div-add-skin-file-selected" class="selected-file" style="display: none">
+                      <span id="span-add-skin-file-name">Aucun fichier choisi</span>
+                      <button id="btn-selected-file-reset" class="btn btn-secondary btn-reset"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                  </div>
+
+                  <div id="form-add-skin-url" style="display: none">
+                    <label for="input-add-skin-url">URL du skin :</label>
+                    <input type="text" id="input-add-skin-url" placeholder="https://..." />
+                  </div>
+
+                  <label for="add-skin-variant-field">Modèle :</label>
+                  <div class="variant-options" id="add-skin-variant-field">
+                    <input type="radio" id="input-add-skin-variant-classic" name="variant" value="classic" checked />
+                    <label for="input-add-skin-variant-classic">Classique</label>
+                    <input type="radio" id="input-add-skin-variant-slim" name="variant" value="slim" />
+                    <label for="input-add-skin-variant-slim">Slim</label>
+                  </div>
+                  <button id="btn-add-skin-submit" class="add-skin-btn-submit btn btn-secondary" disabled>Ajouter et utiliser</button>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <label><i class="fa-fw fa-solid fa-square"></i>&nbsp;&nbsp;Cape</label>
+
+                <div id="cape-gallery" class="skin-gallery"></div>
+              </div>
+            </section>
+
+            <section id="tab-account" class="tab-content">
+              <h3>Gestion du compte</h3>
+
+              <div class="account-card">
+                <div class="account-header">
+                  <div class="account-avatar-fallback">
+                    <i class="fa-solid fa-user" aria-hidden="true"></i>
+                    <img src="" alt="Avatar du joueur" class="account-avatar" id="settings-user-avatar" hidden />
+                  </div>
+                  <div class="account-details">
+                    <span class="account-name" id="settings-user-name"></span>
+                    <span class="account-uuid" id="settings-user-uuid">UUID: 550e8400-e29b...</span>
+                    <span class="account-type" id="settings-user-type"><i class="fa-brands fa-microsoft"></i>&nbsp;&nbsp;Compte Microsoft</span>
+                  </div>
+                </div>
+
+                <div class="account-actions">
+                  <a id="manage-xbox-account" href="https://www.xbox.com/play/user" target="_blank" class="btn btn-secondary">
+                    <i class="fa-fw fa-solid fa-external-link-alt"></i><span>Gérer le compte Xbox</span>
+                  </a>
+                  <button id="btn-logout" class="btn btn-danger">
+                    <i class="fa-fw fa-solid fa-right-from-bracket"></i><span>Se déconnecter</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div id="custom-dialog" class="dialog-overlay hidden">
+      <div class="dialog-box">
+        <h3 id="dialog-title" class="hidden">Information</h3>
+        <p id="dialog-message"></p>
+        <div id="dialog-buttons" class="dialog-actions"></div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/app.ts"></script>
+    <img src="/src/static/images/server-background.png" alt="" style="display: none" />
+  </body>
+</html>
